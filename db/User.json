@@ -1,1 +1,12 @@
-[{"_id":"2c91f061-2b5d-4d75-be73-f4a5186fbcd9","username":"dani2","password":"$2b$10$NGn4.MjZ2RkP5YfhzFmtcuk1/y0h7Yx.ThgwTjP136noc3agtY6KO"},{"_id":"51cc51e5-0981-413d-af84-9cc1ef9dc0aa","username":"dani","password":"$2b$10$UMC.Eo5eLn7u9ikyIa/X2.CZ1yyh/OH1LvJhAXVsunn4NaAAYo1mC"}]
+[
+    {
+        "_id": "2c91f061-2b5d-4d75-be73-f4a5186fbcd9",
+        "username": "dani2",
+        "password": "$2b$10$NGn4.MjZ2RkP5YfhzFmtcuk1/y0h7Yx.ThgwTjP136noc3agtY6KO"
+    },
+    {
+        "_id": "51cc51e5-0981-413d-af84-9cc1ef9dc0aa",
+        "username": "dani",
+        "password": "$2b$10$UMC.Eo5eLn7u9ikyIa/X2.CZ1yyh/OH1LvJhAXVsunn4NaAAYo1mC"
+    }
+]

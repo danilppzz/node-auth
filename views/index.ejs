@@ -67,6 +67,7 @@
           <% if (typeof username !== 'undefined') { %>
           <div class="mb-4">
             <h2 class="text-center text-3xl font-bold mb-4">Welcome <%= username %></h2>
+            <a href="/protected" class="btn btn-primary text-white">Go to /protected</a>
             <form action="/logout" method="POST" class="mt-2">
               <button
                 type="submit"
@@ -86,6 +87,7 @@
                 name="username"
                 class="form-control py-3 px-4 border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Username"
+                autocomplete="username"
                 required
               />
             </div>
@@ -96,6 +98,7 @@
                 name="password"
                 class="form-control py-3 px-4 border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Password"
+                autocomplete="current-password"
                 required
               />
             </div>

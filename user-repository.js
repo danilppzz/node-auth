@@ -2,6 +2,7 @@ import DBLocal from "db-local";
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "./config.js";
 import crypto from "crypto";
+import { type } from "os";
 
 const { Schema } = new DBLocal({ path: "./db" });
 
@@ -35,7 +36,7 @@ export class UserRepository {
 
     const user = User.findOne({ username });
     if (!user) throw new Error("username does not exist");
-
+    
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) throw new Error("password is invalid");
 
