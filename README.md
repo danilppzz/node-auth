@@ -1,3 +1,8 @@
+<div class="logo" align="center">
+  <img width="25%" src="https://static-00.iconduck.com/assets.00/node-js-icon-454x512-nztofx17.png" alt="bloons-logo">
+  <br>
+</div>
+
 ## Description
 
 This project is a simple web application built with Express.js that includes user authentication and authorization using JSON Web Tokens (JWT). It uses EJS as the templating engine and manages cookies for session handling. It also includes a local database implementation using `db-local` for user data storage and `bcrypt` for password hashing.
