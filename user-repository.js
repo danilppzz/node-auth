@@ -18,7 +18,7 @@ export class UserRepository {
     Validation.password(password);
 
     const user = User.findOne({ username });
-    if (user) throw new Error("username already exists");
+    if (user) throw new Error("Username already exists");
 
     const id = crypto.randomUUID();
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
@@ -35,12 +35,12 @@ export class UserRepository {
     Validation.password(password);
 
     const user = User.findOne({ username });
-    if (!user) throw new Error("username does not exist");
-    
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) throw new Error("password is invalid");
+    if (!user) throw new Error("Username does not exist");
 
-    const { password: _, ...publicUser } = user
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) throw new Error("Password is invalid");
+
+    const { password: _, ...publicUser } = user;
 
     return publicUser;
   }
@@ -48,14 +48,24 @@ export class UserRepository {
 
 class Validation {
   static username(username) {
-    if (typeof username !== "string") throw new Error("username must be a string");
-    if (username.length < 4) throw new Error("username must be at least 4 caracters long");
+    if (typeof username !== "string") throw new Error("Username must be a string");
+    if (username.length < 3) throw new Error("Username must be at least 3 characters long");
+
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      throw new Error(`Invalid character in username`);
+    }
+
+    for (let i = 0; i < username.length; i++) {
+      if (!/^[a-zA-Z0-9_]+$/.test(username[i])) {
+        throw new Error(`Invalid character in username`);
+      }
+    }
   }
   static password(password) {
-    if (typeof password !== "string") throw new Error("password must be a string");
-    if (password.length < 8) throw new Error("password must be at least 8 caracters long");
-    if (!/\d/.test(password)) throw new Error("password must contain at least one number");
+    if (typeof password !== "string") throw new Error("Password must be a string");
+    if (password.length < 8) throw new Error("Password must be at least 8 caracters long");
+    if (!/\d/.test(password)) throw new Error("Password must contain at least one number");
     if (!/[A-Z]/.test(password))
-      throw new Error("password must contain at least one uppercase letter");
+      throw new Error("Password must contain at least one uppercase letter");
   }
 }
