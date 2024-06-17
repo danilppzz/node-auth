@@ -1,17 +1,20 @@
 import express from "express";
 import jwt from "jsonwebtoken";
+import cors from 'cors';
 import cookieParser from "cookie-parser";
 
 import { UserRepository } from "./user-repository.js";
-import { SECRET_JWT_KEY, PORT } from "./config.js";
+import { SECRET_JWT_KEY, PORT, CORS_URL } from "./config.js";
 
 const app = express();
-
-app.set("view engine", "ejs");
 
 //? MIDDLEWARE
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+  origin: CORS_URL,
+  credentials: true,
+}));
 
 app.use((req, res, next) => {
   const token = req.cookies.access_token;
@@ -26,8 +29,9 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  const { user } = req.session;
-  res.render("index", user);
+  res.status(200).json({ status: res.statusCode, auth: {
+    POST: { login: "/login", register: "/register", logout: "/logout" }
+  } });
 });
 
 app.post("/login", async (req, res) => {
@@ -50,11 +54,11 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/register", async (req, res) => {
-  const { username, password } = req.body;
-
+app.post("/signup", async (req, res) => {
+  const { mail, username, password } = req.body;
   try {
-    const id = await UserRepository.create({ username, password });
+    const id = await UserRepository.create({ mail, username, password });
+    console.log(id)
     res.json({ id: id });
   } catch (error) {
     res.status(400).send(error.message);
@@ -62,7 +66,7 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('access_token').redirect('/')
+  res.clearCookie("access_token").redirect("/");
 });
 
 //! PROTECTED
