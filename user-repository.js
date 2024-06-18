@@ -14,6 +14,23 @@ const User = Schema("User", {
 });
 
 export class UserRepository {
+  static async exist({ mail, username }) {
+    const _username = User.findOne({ username });
+    const _mail = User.findOne({ mail });
+    if (_username) {
+      if (_mail) {
+        return { mail: true, username: true }
+      }
+    } else {
+      if (_mail) {
+        return { mail: true, username: false }
+      } else {
+        return { mail: false, username: false }
+      }
+    }
+    
+    
+  }
   static async create({ mail, username, password }) {
     Validation.username(username);
     Validation.password(password);

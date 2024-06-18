@@ -1,6 +1,6 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import cors from 'cors';
+import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import { UserRepository } from "./user-repository.js";
@@ -11,10 +11,12 @@ const app = express();
 //? MIDDLEWARE
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-  origin: CORS_URL,
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: CORS_URL,
+    credentials: true,
+  })
+);
 
 app.use((req, res, next) => {
   const token = req.cookies.access_token;
@@ -29,28 +31,43 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.status(200).json({ status: res.statusCode, auth: {
-    POST: { login: "/login", register: "/register", logout: "/logout" }
-  } });
+  res.status(200).json({
+    status: res.statusCode,
+    auth: {
+      POST: { login: "/login", register: "/register", logout: "/logout" },
+      GET: { protected: "/protected", user: "/user" },
+    },
+  });
 });
 
-app.post("/login", async (req, res) => {
+app.get("/user", async (req, res) => {
+  const { user } = req.session;
+  res.status(200).json(user);
+});
+
+app.post("/signin", async (req, res) => {
   const { username, password } = req.body;
   try {
     const user = await UserRepository.login({ username, password });
-    const token = jwt.sign({ id: user._id, username: user.username }, SECRET_JWT_KEY, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { id: user._id, mail: user.mail, username: user.username },
+      SECRET_JWT_KEY,
+      {
+        expiresIn: 1000 * 60 * 60 * 24 * 30,
+      }
+    );
     res
+      .status(200)
       .cookie("access_token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 1000 * 60 * 60,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+        expires: 1000 * 60 * 60 * 24 * 30,
       })
       .send(user);
   } catch (error) {
-    res.status(401).send(error.message);
+    res.json({ error: error.message });
   }
 });
 
@@ -58,15 +75,15 @@ app.post("/signup", async (req, res) => {
   const { mail, username, password } = req.body;
   try {
     const id = await UserRepository.create({ mail, username, password });
-    console.log(id)
-    res.json({ id: id });
+    console.log(id);
+    res.json({ id: id }).status(200);
   } catch (error) {
-    res.status(400).send(error.message);
+    res.json({ error: error.message });
   }
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("access_token").redirect("/");
+  res.clearCookie("access_token").status(200).json({ message: "logout success" });
 });
 
 //! PROTECTED
