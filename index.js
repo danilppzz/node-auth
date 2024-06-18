@@ -42,6 +42,7 @@ app.get("/", (req, res) => {
 
 app.get("/user", async (req, res) => {
   const { user } = req.session;
+  if (!user) return;
   res.status(200).json(user);
 });
 
@@ -60,10 +61,10 @@ app.post("/signin", async (req, res) => {
       .status(200)
       .cookie("access_token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 días en milisegundos
-        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Fecha de expiración
+        secure: process.env.NODE_ENV === "production", // Adjust based on environment
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // Adjust based on environment
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       })
       .send(user);
   } catch (error) {
@@ -82,7 +83,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-app.post("/logout", (req, res) => {
+app.get("/logout", (req, res) => {
   res.clearCookie("access_token").status(200).json({ message: "logout success" });
 });
 

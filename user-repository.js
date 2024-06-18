@@ -20,6 +20,8 @@ export class UserRepository {
     if (_username) {
       if (_mail) {
         return { mail: true, username: true }
+      } else {
+        return { mail: false, username: true }
       }
     } else {
       if (_mail) {
@@ -35,10 +37,10 @@ export class UserRepository {
     Validation.username(username);
     Validation.password(password);
 
-    const user = User.findOne({ username });
-    if (user) throw new Error("Username already exists");
-    const cmail = User.findOne({ mail });
-    if (cmail) throw new Error("Email is allready in use");
+    console.log(await this.exist({ mail, username }))
+    const { mail: mailExists, username: usernameExists } = await this.exist({ mail, username });
+    if (usernameExists) throw new Error("Username already exists");
+    if (mailExists) throw new Error("Email is already in use");
 
     const id = crypto.randomUUID();
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
