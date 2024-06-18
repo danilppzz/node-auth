@@ -53,7 +53,7 @@ app.post("/signin", async (req, res) => {
       { id: user._id, mail: user.mail, username: user.username },
       SECRET_JWT_KEY,
       {
-        expiresIn: 1000 * 60 * 60 * 24 * 30,
+        expiresIn: "30d", // Expira en 30 días
       }
     );
     res
@@ -62,12 +62,12 @@ app.post("/signin", async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 * 30,
-        expires: 1000 * 60 * 60 * 24 * 30,
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 días en milisegundos
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Fecha de expiración
       })
       .send(user);
   } catch (error) {
-    res.json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
